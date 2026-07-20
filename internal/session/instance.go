@@ -225,8 +225,11 @@ type Instance struct {
 
 	// Hermes CLI integration. Hermes mints a new session ID each launch and does
 	// not export it (no env var / hook), so agent-deck captures it from
-	// `hermes sessions list` at restart time and resumes with --resume.
-	HermesSessionID string `json:"hermes_session_id,omitempty"`
+	// `hermes sessions list` at restart time and resumes with --resume. Not
+	// persisted (json:"-"): it is re-captured on every restart, so it needs no
+	// lifetime beyond a single Restart() call — which also keeps it out of the
+	// JSON marshaling that could otherwise race the restart-time write.
+	HermesSessionID string `json:"-"`
 	// restartEnv contains one-shot environment overrides while RestartWithEnv is
 	// building the replacement process. It is cleared before the call returns.
 	restartEnv map[string]string

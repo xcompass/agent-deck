@@ -79,6 +79,9 @@ func captureHermesSessionID(workspace string) string {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), hermesSessionsListTimeout)
 	defer cancel()
+	// #nosec G204 -- bin[0] is the configured/built-in hermes binary (GetToolCommand),
+	// not runtime user input; args are fixed subcommand literals plus workspace, a
+	// filesystem path passed as an argv element (no shell), so no injection surface.
 	cmd := exec.CommandContext(ctx, bin[0], args...)
 	// WaitDelay force-closes the I/O pipes shortly after the context is
 	// cancelled, so a wedged hermes (or a lingering grandchild holding stdout)
